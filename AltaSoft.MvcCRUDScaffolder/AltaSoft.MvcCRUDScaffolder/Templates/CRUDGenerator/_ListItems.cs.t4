@@ -1,0 +1,75 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model IEnumerable<#= "<" + ViewDataTypeName + ">" #>
+
+<div id="ItemsList">
+	<table class="table table no-more-tables">
+		<thead>
+			<tr>
+<#
+int count = 0;
+IEnumerable<PropertyMetadata> properties = ModelMetadata.Properties;
+foreach (PropertyMetadata property in properties) {
+if (property.Scaffold) {
+count++;
+#>
+				<td nowrap>
+					<input type="checkbox" id="ColumnConfig<#= GetValueExpression(property) #>" checked="checked" style="display: none;">
+					<label for="ColumnConfig<#= GetValueExpression(property) #>">@Html.DisplayNameFor(model => model.<#= GetValueExpression(property) #>)</label>
+				</td>
+<#
+}
+}
+#>
+				<td nowrap>Actions</td>
+			</tr>
+		</thead>
+		<tbody>
+		@foreach (var item in Model) 
+		{
+				<tr>
+<#
+foreach (PropertyMetadata property in properties) {
+if (property.Scaffold) {
+#>
+					<td>
+						@Html.DisplayFor(modelItem => <#= "item." + GetValueExpression(property) #>)
+					</td>
+<#
+}
+}
+#>
+					<td>
+						<a href="@Url.Action("Edit", new { id = item.Id })"><i class="fa fa-pencil pointer" title="Edit"></i></a>
+						<a href="@Url.Action("Details", new { id = item.Id })"><i class="fa fa-mail-forward pointer" title="Details"></i></a>
+						<a href="@Url.Action("Delete", new { id = item.Id })"><i class="fa fa-trash-o pointer" title="Details"></i></a>
+					</td>
+				</tr>
+		}
+		</tbody>
+	</table>
+	@if (ViewBag.PagesCount > 1)
+    {
+		<div class="text-center">
+            <ul class="pagination" data-url="@Url.Action("ListItems")">
+                @if (ViewBag.ActivePage > 3)
+                {
+                    <li><a href="#" class="first_link" data-skip="0"><</a></li>
+                    <li><a href="#" class="prev_link" data-skip="@((ViewBag.ActivePage-1) * ViewBag.ItemsOnPage)">«</a></li>
+                }
+                @for (int i = (ViewBag.ActivePage > 3) ? ViewBag.ActivePage - 3 : 0; i < ((ViewBag.PagesCount - ViewBag.ActivePage > 3) ? ViewBag.ActivePage + 3 : ViewBag.PagesCount); i++)
+                {
+                    <li class="@(ViewBag.ActivePage == i ? "active" : "")"><a href="#" data-skip="@(i * ViewBag.ItemsOnPage)">@(i + 1)</a></li>
+                }
+                @if (ViewBag.PagesCount - ViewBag.ActivePage > 3)
+                {
+                    <li><a href="#" class="next_link" data-skip="@((ViewBag.ActivePage+1) * ViewBag.ItemsOnPage)">»</a></li>
+                    <li><a href="#" class="last_link" data-skip="@((ViewBag.PagesCount-1) * ViewBag.ItemsOnPage)">></a></li>
+                }
+            </ul>
+
+        </div>
+    }
+</div>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

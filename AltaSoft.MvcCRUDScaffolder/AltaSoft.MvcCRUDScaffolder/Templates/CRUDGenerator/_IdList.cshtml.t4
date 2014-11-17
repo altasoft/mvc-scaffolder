@@ -1,0 +1,49 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model List<<#= ViewDataTypeName #>>
+@{
+    string ListId = Convert.ToString(ViewData["ListId"]);
+}
+@using GDBS.UI.Utils;
+<table class="table no-more-tables" id="@ListId" data-check-url="@Url.Action("SearchByAdminNumber")">
+    <thead>
+        <tr>
+            <td width="85%">Admin. Numb.</td>
+            <td width="15%"></td>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => item.AdminNumber)
+                        @Html.HiddenFor(model => item.Id)
+                        @Html.HiddenFor(model => item.AdminNumber)
+                    </td>
+                    <td><input type="button" value="Delete" name="delete"></td>
+                </tr>
+            }
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>
+                <div>
+                    @Html.TextBox("MeterPoint.AdminNumber", string.Empty, new { placeholder = "Meter Point Admin. Number", data_input_autocomlete = "mpan", @class = "admin-number" })
+                </div>
+            </td>
+            <td>
+                <input type="button" value="Add" id="add" />
+                <div id="hiddenValues">
+
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

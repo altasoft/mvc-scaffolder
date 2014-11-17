@@ -1,0 +1,51 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+
+@model List<<#= SavedFilterModelTypeName #>>
+
+<div class="pull-right">
+    <select class="saved-filters" style="width: 200px; display: inline-block">
+        <option value="0">No Filter</option>
+
+        @if (Model.Count(m => !m.IsCommon) > 0)
+        {
+            <optgroup label="Individual" data-type="Individual">
+                @foreach (var item in Model.Where(m => !m.IsCommon))
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </optgroup>
+        }
+
+        @if (Model.Count(m => m.IsCommon) > 0)
+        {
+            <optgroup label="Common" data-type="Common">
+                @foreach (var item in Model.Where(m => m.IsCommon))
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </optgroup>
+        }
+    </select>
+    <button type="button" class="btn btn-default delete-filter" disabled="disabled">Delete</button>
+</div>
+<div class="navbar-form" style="margin:0; padding:0;">
+    <div class="form-group">
+        <button type="button" class="btn btn-default save-filter">Save Filter</button>
+    </div>
+    <input type="text" class="form-control required" placeholder="Filter Name" id="FilterName">
+    <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-default active" id="IndividualLabel">
+            <input type="radio" value="individual">
+            Individual
+        </label>
+        <label class="btn btn-default" id="CommonLabel">
+            <input type="radio" value="common">
+			Common
+        </label>
+    </div>
+</div>
+
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

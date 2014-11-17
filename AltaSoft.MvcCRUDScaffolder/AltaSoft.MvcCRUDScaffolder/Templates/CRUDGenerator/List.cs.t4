@@ -1,0 +1,45 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model IEnumerable<#= "<" + ViewDataTypeName + ">" #>
+
+<#
+if (IsFilterTypeSelected) {
+#>
+@Html.Partial("_ListFilter")
+<# } #>
+
+<div class="form">
+    <div class="title green">
+        <h4>List</h4>
+        <div class="pull-right">
+			<a id="ShowHideListColumns" data-toggle="odd"><i class="fa fa-columns" data-toggle="tooltip" data-placement="top" title="Show / Hide Columns"></i></a>
+            <a data-toggle="collapse" data-target="#ListFilterFormPanel" class="toggle-filter"><i class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Show / Hide Filters"></i></a>
+			<a href="@Url.Action("Create")"><i class="fa fa-plus" data-toggle="tooltip" data-placement="top" title="Add New"></i></a>
+		</div>
+    </div>
+    <div style="overflow: auto;">
+        <div class="form-col-2">
+            @Html.Action("ListItems")
+        </div>
+    </div>
+</div>
+<#
+if (IsFilterTypeSelected) {
+#>
+<script type="text/javascript">
+    $(function () {
+        AltaSoft.General.ConfigureListColumnsVisibility('#ItemsList');
+        AltaSoft.General.ConfigureListFilters('#ListFilterFormPanel', '#ItemsList');
+        AltaSoft.General.ConfigureListPaging('#ItemsList', '#ListFilterForm');
+    });
+</script>
+<# } else { #>
+<script type="text/javascript">
+    $(function () {
+        AltaSoft.General.ConfigureListColumnsVisibility('#ItemsList');
+        AltaSoft.General.ConfigureListPaging('#ItemsList');
+    });
+</script>
+<# } #>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

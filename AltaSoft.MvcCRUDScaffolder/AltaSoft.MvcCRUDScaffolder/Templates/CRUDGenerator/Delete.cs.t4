@@ -1,0 +1,56 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model <#= ViewDataTypeName #>
+
+
+<div class="col-lg-5 col-md-8">
+    <div class="form">
+        <div class="title green">
+            <h4>Delete</h4>
+        </div>
+        <div class="form-col-2 col-1-1">
+            <h3>Are you sure you want to delete this?</h3>
+            <hr />
+			<div>
+<#
+foreach (PropertyMetadata property in ModelMetadata.Properties) {
+    if (property.Scaffold && !property.IsPrimaryKey && !property.IsForeignKey) {
+#>
+<#
+        // We do not want to show any association properties for which there is
+        // no associated foreign key.
+        if (property.IsAssociation && GetRelatedModelMetadata(property) == null) {
+            continue;
+        }
+#>
+				<section>
+					<div>@Html.LabelFor(model => model.<#= property.PropertyName #>)</div>
+					<div>
+						@Html.DisplayFor(model => model.<#= property.PropertyName #>)
+					</div>
+				</section>
+<#
+    }
+}
+#>
+			</div>
+            <hr />
+            <section>
+                <div>
+                    <a href="@Url.Action("List")" class="btn btn-default">Back to List</a>
+                </div>
+                <div class="a-r">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="submit" value="Delete" class="btn btn-default" />
+                    }
+                </div>
+            </section>
+
+		</div>
+    </div>
+</div>
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

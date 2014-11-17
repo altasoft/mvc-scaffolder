@@ -1,0 +1,70 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+
+@model <#= FilterTypeName #>
+
+<div id="ListFilterFormPanel" class="panel panel-default collapse fade" data-load-url="@Url.Action("ListFilters")" data-save-url="@Url.Action("SaveFilter")" data-delete-url="@Url.Action("DeleteFilter")">
+<#
+if (IsFilterTypeSelected) {
+#>
+	<div class="panel-heading" style="min-height: 54px;">
+        @Html.Partial("_ListFilterHeader", ViewBag.Filters as List<<#= SavedFilterModelTypeName #>>)
+    </div>
+<#
+}
+#>
+    <div class="panel-body">
+    @using (Html.BeginForm("ListItems", null, FormMethod.Post, new { id = "ListFilterForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+<#
+	var i = 0;
+
+foreach (PropertyMetadata property in ModelMetadata.Properties) {
+    if (property.Scaffold) {
+		i++;
+#>
+			@Html.LabelFor(model => model.<#= property.PropertyName #>, new { @class = "col-md-2 control-label" })
+            <div class="col-md-2">
+<#
+            if (property.TypeName.Equals("System.Boolean")) {
+#>
+				@Html.CheckBoxFor(model => model.<#= property.PropertyName #>)
+<#
+            } else if (property.IsEnum && !property.IsEnumFlags) {
+#>
+				@Html.DropDownListFor(model => model.<#= property.PropertyName #>, , "--")
+<#
+            } else {
+#>
+				@Html.TextBoxFor(model => model.<#= property.PropertyName #>)
+<#
+            } 
+#>
+			</div>
+<#
+
+			if (i % 3 == 0) {
+#>
+		</div>
+        <div class="form-group">
+<#
+            }
+    }
+}
+#>
+		</div>
+        <div class="form-group">
+            @Html.Label("Take", "Items Count", new { @class = "col-md-2 control-label" })
+            <div class="col-md-2">
+				@Html.DropDownList("Take", ViewBag.ItemsOnPageList as IEnumerable<SelectListItem>, new { @class = "form-control" })
+            </div>
+            <div class="col-md-8 text-right"><input type="submit" value="Filter" /></div>
+        </div>
+    }
+	</div>
+</div>
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

@@ -1,0 +1,368 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension="cs" #>
+<#@ import namespace="System" #>
+<#@ parameter type="System.String" name="ControllerName" #>
+<#@ parameter type="System.String" name="ControllerRootName" #>
+<#@ parameter type="System.String" name="Namespace" #>
+<#@ parameter type="System.String" name="AreaName" #>
+<#@ parameter type="System.String" name="ViewDataTypeShortName" #>
+<#@ parameter type="System.String" name="ModelNamespace" #>
+<#@ parameter type="System.Boolean" name="IsFilterTypeSelected" #>
+<#@ parameter type="System.String" name="FilterTypeName" #>
+<#@ parameter type="System.String" name="FilterTypeShortName" #>
+<#@ parameter type="System.Boolean" name="IsSavedFilterModelTypeSelected" #>
+<#@ parameter type="System.String" name="SavedFilterModelTypeName" #>
+<#@ parameter type="System.String" name="SavedFilterModelTypeShortName" #>
+<#@ parameter type="System.Boolean" name="IsSearchFeatureEnabled" #>
+<#@ parameter type="System.Boolean" name="IsOne2ManyFeatureEnabled" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using <#= ModelNamespace #>;
+
+namespace <#= Namespace #>
+{
+    public class <#= ControllerName #> : Controller
+    {
+        public ActionResult Index()
+        {
+            return RedirectToAction("List");
+        }
+
+        public ActionResult Details(int? id)
+        {
+            var model = GetItemById(id);
+            if (model == null)
+                return RedirectToAction("List");
+
+            return View(model);
+        }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Create(<#= ViewDataTypeShortName #> model)
+        {
+            if (ModelState.IsValid)
+            {
+                //TODO: Implementation <#= ControllerName #> Create
+
+                //try
+                //{
+
+                //    using (var manager = new BusinessObject())
+                //    {
+                //        var item = model.ToDB();
+                //        int itemId = manager.Create(item);
+                //        if (itemId > 0)
+                //        {
+                //            ModelState.Clear();
+                //            TempData["CREATE_MESSAGE"] = "Item has been added successfully";
+                //            model = new <#= ViewDataTypeShortName #>();
+                //        }
+                //        else
+                //            ModelState.AddModelError(String.Empty, "Error occured while adding item");
+                //    }
+                //}
+                //catch (ModelValidationException ex)
+                //{
+                //    ex.MapToModelState(ModelState);
+                //}
+            }
+
+            return View(model);
+        }
+
+		
+        public ActionResult Edit(int? id)
+        {
+            var model = GetItemById(id);
+            if (model == null)
+                return RedirectToAction("List");
+
+            return View(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Edit(<#= ViewDataTypeShortName #> model)
+        {
+			if (ModelState.IsValid)
+            {
+                //TODO: Implementation <#= ControllerName #> Edit
+
+                //try
+                //{
+                //        using (var manager = new BusinessObject())
+                //        {
+                //            manager.Update(model.ToDB());
+                //            ModelState.Clear();
+                //            TempData["EDIT_MESSAGE"] = "Item has been updated successfully";
+                //        }
+                //}
+                //catch (ModelValidationException mve)
+                //{
+                //    mve.MapToModelState(ModelState);
+                //}
+            }
+
+            return View(model);
+        }
+
+
+        public ActionResult Delete(int id)
+        {
+            var model = GetItemById(id);
+            if (model == null)
+                return RedirectToAction("List");
+
+            return View(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Delete(<#= ViewDataTypeShortName #> model)
+        {
+			//TODO: Implementation <#= ControllerName #> Delete
+           
+            //if (ModelState.IsValid)
+            //{
+            //    using (var manager = new BusinessObject())
+            //    {
+            //        manager.Delete(model.ToDB());
+            //        ModelState.Clear();
+            //    }
+            //}
+
+            return RedirectToAction("List");
+        }
+
+<# if (!IsFilterTypeSelected) { #>
+		
+		public ActionResult List()
+		{
+			return View();
+		}
+
+		public ActionResult ListItems(int skip = 0, int take = 10)
+		{
+            var pagesCount = 0;
+            var model = GetItems(skip, take, ref pagesCount);
+
+            ViewBag.ActivePage = skip / take;
+            ViewBag.ItemsOnPage = take;
+            ViewBag.PagesCount = pagesCount;
+
+            return PartialView("_ListItems", model);
+		}
+
+
+
+        #region Helper Methods
+        List<<#= ViewDataTypeShortName #>> GetItems(int skip, int take, ref int pagesCount)
+        {
+            // TODO: implementation <#= ControllerName #> GetItems
+
+            //using (var manager = new BusinessObject())
+            //{
+            //	int totalCount;
+
+            //	var filter = filterModel.ToFilterDB();
+            //	var model = manager.GetList(filter, null, skip, take, out totalCount).Select(i => i.ToViewModel()).ToList();
+            //	pagesCount = Convert.ToInt32(Math.Ceiling((double)totalCount / take));
+            //	model = model.Skip(skip).Take(take).ToList();
+
+            //	return model;
+            //}
+
+            return null;
+        }
+
+<# } else { #>
+		
+		public ActionResult List()
+		{
+            ViewBag.ItemsOnPageList = GetAllowedTakesList(10);
+<# if (IsSavedFilterModelTypeSelected) { #>
+            ViewBag.Filters = GetFilters();
+<# } #>
+
+			return View();
+		}
+
+		public ActionResult ListItems(<#= FilterTypeShortName #> filterModel, int skip = 0, int take = 10)
+		{
+            var pagesCount = 0;
+            var model = GetItems(filterModel, skip, take, ref pagesCount);
+
+            ViewBag.ActivePage = skip / take;
+            ViewBag.ItemsOnPage = take;
+            ViewBag.PagesCount = pagesCount;
+            ViewBag.FilterModel = filterModel;
+
+            return PartialView("_ListItems", model);
+		}
+		
+
+
+        #region Helper Methods
+        IEnumerable<SelectListItem> GetAllowedTakesList(int selected)
+        {
+            var allowedTakes = new int[] { 10, 50, 100 };
+
+            return allowedTakes.Select(take =>
+                new SelectListItem
+                {
+                    Text = take.ToString(),
+                    Value = take.ToString(),
+                    Selected = (selected == take)
+                }
+            );
+        }
+
+        List<<#= ViewDataTypeShortName #>> GetItems(<#= FilterTypeShortName #> filterModel, int skip, int take, ref int pagesCount)
+        {
+            // TODO: implementation <#= ControllerName #> GetItems
+
+            //using (var manager = new BusinessObject())
+            //{
+            //    var filter = filterModel.ToFilterDB();
+            //    var model = manager.GetItems(filter).Select(i => i.ToViewModel()).ToList();
+            //    pagesCount = Convert.ToInt32(Math.Ceiling((double)model.Count / take));
+            //    model = model.Skip(skip).Take(take).ToList();
+
+            //    return model;
+            //}
+
+            return new List<<#= ViewDataTypeShortName #>>();
+        }
+<# } #>
+
+        <#= ViewDataTypeShortName #> GetItemById(int? id)
+        {
+            // TODO: implementation <#= ControllerName #> GetItemById
+
+            //using (var manager = new BusinessObject())
+            //{
+            //    var model = manager.GetById(id.Value).ToViewModel();
+            //    return model;
+            //}
+
+            return new <#= ViewDataTypeShortName #>();
+        }
+
+<# if (IsSavedFilterModelTypeSelected) { #>
+		List<<#= SavedFilterModelTypeName #>> GetFilters()
+        {
+            //using (var manager = new SavedFilterBusinessObject())
+            //{
+            //    var items = manager.GetItems();
+
+            //    return items.Select(i => i.ToViewModel()).ToList();
+            //}
+
+            return new List<<#= SavedFilterModelTypeName #>>();
+        }
+<# } #>
+
+        #endregion
+
+
+<# if (IsSavedFilterModelTypeSelected) { #>
+		#region Saved Filters
+
+        public ActionResult ListFilters(int? id)
+        {
+            //using (var manager = new SavedFilterBusinessObject())
+            //{
+            //    var filter = manager.GetById((int)id);
+            //    if (filter != null)
+            //        return Json(filter.ToViewModel(), JsonRequestBehavior.AllowGet);
+            //}
+
+            return new JsonResult();
+        }
+
+        [HttpPost, Authorize]
+        public int SaveFilter(<#= SavedFilterModelTypeName #> filter)
+        {
+            //if (!User.Identity.IsAuthenticated)
+            //    return 0;
+
+            //using (var manager = new SavedFilterBusinessObject())
+            //{
+            //    filter.UserId = GDBS.UI.Common.UserContext.Current.UserId;
+            //    return manager.Save(filter.ToDB());
+            //}
+
+            return 0;
+        }
+
+        [HttpPost, Authorize]
+        public void DeleteFilter(int id)
+        {
+            //using (var manager = new SavedFilterBusinessObject())
+            //{
+            //    var item = manager.GetById(id);
+            //    manager.Delete(item);
+            //}
+        }
+
+        #endregion
+<# } #>
+
+<# if (IsSearchFeatureEnabled) { #>
+		[HttpPost]
+        public ActionResult Search(<#= FilterTypeShortName #> filterModel)
+        {
+            List<<#= FilterTypeShortName #>> model = null;
+
+            //if (!string.IsNullOrEmpty(filterModel.AdminNumber) || filterModel.Type != null)
+            //{
+            //    using (MeterPointBusinessObject manager = new MeterPointBusinessObject())
+            //    {
+            //        var filter = new GDBS.Models.PhysicalInfrastructure.EntityFilters.MeterPointFilter()
+            //        {
+            //            AdminNumber = filterModel.AdminNumber
+            //        };
+
+            //        if (filterModel.Type.HasValue)
+            //        {
+            //            filter.Types = new List<GDBS.Models.PhysicalInfrastructure.MeterPointTypes>();
+            //            filter.Types.Add((GDBS.Models.PhysicalInfrastructure.MeterPointTypes)filterModel.Type);
+            //        }
+
+            //        var meterPointList = manager.GetList(filter, null);
+            //        model = meterPointList.Select(i => i.ToViewModel()).ToList();
+            //    }
+            //}
+            //else
+            //{
+            //    ModelState.AddModelError(string.Empty, "Fill search parameters");
+            //}
+
+            return PartialView("_SearchListItems", model);
+        }
+<# } #>
+
+<# if (IsOne2ManyFeatureEnabled) { #>
+		[HttpPost]
+        public ActionResult CheckByAdminNumber(string adminNumber, int flags)
+        {
+            //try
+            //{
+            //    var meterPointId = PhysicalInfrastructureDBExtensions.GetMeterPointId(adminNumber, flags);
+            //    return Json(meterPointId, JsonRequestBehavior.AllowGet);
+            //}
+            //catch (Exception e)
+            //{
+            //    return Json(new { error = e.Message }, JsonRequestBehavior.AllowGet);
+            //}
+
+			return new EmptyResult();
+        }
+<# } #>
+
+    }
+}

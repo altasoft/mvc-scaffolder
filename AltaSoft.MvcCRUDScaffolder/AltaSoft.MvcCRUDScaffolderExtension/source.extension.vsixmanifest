@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="AltaSoft.MvcCRUDScaffolderExtension..40e7bb7e-f72d-44cf-8439-2567be2590c6" Version="2.2" Language="en-US" Publisher="Alta Software" />
+    <DisplayName>AltaSoft Mvc CRUD Scaffolder</DisplayName>
+    <Description xml:space="preserve">Extension helps create CRUD easily based on any model class.
+
+Features:
+* Paging (server-side, with skip / take, manual items count on the page)
+* Filters (any object selected by developer)
+* List Columns Configuration (user can hide / show any column in the list)
+* Fast Controller Impelemntation
+</Description>
+    <GettingStartedGuide>AltaSoft Mvc CRUD Scaffolder - Documentation.docx</GettingStartedGuide>
+    <Icon>icon.jpg</Icon>
+    <PreviewImage>preview.jpg</PreviewImage>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.Pro" />
+    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.Ultimate" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="AltaSoft.MvcCRUDScaffolder" Path="|AltaSoft.MvcCRUDScaffolder|" />
+  </Assets>
+</PackageManifest>

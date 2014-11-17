@@ -1,0 +1,35 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model IEnumerable<<#= ViewDataTypeName #>>
+@using GDBS.UI.Utils
+<div>
+    @Alert.ValidationSummary(ViewData.ModelState)
+    @if (Model.Count() > 0)
+    {
+        <table class="table table no-more-tables">
+            <thead>
+                <tr>
+                    <td nowrap><#= ControllerBaseName #></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr data-id="@item.AdminNumber">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AdminNumber)
+                            </td>
+                            <td><i class="fa fa-chevron-down red pointer" data-button-role="accept"></i></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

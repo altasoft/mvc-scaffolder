@@ -1,0 +1,37 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model <#= ViewDataTypeName #>
+
+<div class="col-lg-5 col-md-8">
+	<div class="form">
+		<div class="title green">
+			<h4>Details</h4>
+		</div>
+        <div class="form-col-2 col-1-1">
+<#
+foreach (PropertyMetadata property in ModelMetadata.Properties) {
+    if (property.Scaffold) {
+#>
+			<section>
+				<div>@Html.LabelFor(model => model.<#= property.PropertyName #>)</div>
+				<div>
+					@Html.DisplayFor(model => model.<#= property.PropertyName #>)
+				</div>
+			</section>
+<#
+    }
+}
+#>
+            <hr />
+            <section>
+                <div>
+                    <a href="@Url.Action("List")" class="btn btn-default">Back to List</a>
+                </div>
+                <div class="a-r">
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

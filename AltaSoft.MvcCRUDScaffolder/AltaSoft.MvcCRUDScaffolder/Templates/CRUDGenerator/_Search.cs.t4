@@ -1,0 +1,22 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+@model <#= FilterTypeName #>
+@{
+    Layout = null;
+}
+
+<div>
+    <div id="Search<#= ControllerBaseName #>Module" data-load-url="@Url.Action("Search", "<#= ControllerBaseName #>")">
+        <div class="row">
+            <div class="col-md-5">
+                @Html.TextBoxFor(model => model.AdminNumber, new { placeholder = "<#= ControllerBaseName #> Number" })
+            </div>
+            <div class="col-md-5 text-right"><input type="button" id="search" value="Search" /></div>
+        </div>
+    </div>
+    <div id="Search<#= ControllerBaseName #>Result">
+    </div>
+</div>
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>
